@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "text-minesweeper"
+version = "0.1.0"
+description = ""
+authors = ["dennis <dennisfeng2@gmail.com>"]
+readme = "README.md"
+packages = [{include = "text_minesweeper"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.21.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
