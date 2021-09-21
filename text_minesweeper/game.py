@@ -11,6 +11,7 @@ SURROUNDING_SPACE_DELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1)
 class Game:
     def __init__(self, board_size: int, num_mines: int):
         """
+        Instantiates a game handle.
 
         :param board_size: the board will be a square of length `board_size`
         :param num_mines: number of mines in the game, randomly dispersed
@@ -95,8 +96,8 @@ class Board:
         Identifies a list of all blank spaces within an adjacent-connected region to the identified position. Uses a
         BFS to search for these
 
-        :param row:
-        :param col:
+        :param row: row of position
+        :param col: col of position
         :return: list of positions
         """
         spaces = [(row, col)]
@@ -114,14 +115,15 @@ class Board:
                     spaces.append((current_row, current_col))
         return spaces
 
-    def step(self, row: int , col: int, flag: bool) -> int:
+    def step(self, row: int, col: int, flag: bool) -> int:
         """
-        The move that the player plays.
+        Plays one move.
 
         :param row: row of the move
         :param col: column of the move
-        :param flag: whether the player's move was to toggle flag for the position, or to uncover the position
-        :return: game status; 0 is ongoing, -1 is lost, 1 is won
+        :param flag: whether the player's move was to toggle flag for the position, or to uncover the position. True
+            means it was to toggle flag
+        :return: resultant game status; 0 is ongoing, -1 is lost, 1 is won
         """
         if flag:
             self.flags[row, col] = not self.flags[row, col]
@@ -157,7 +159,7 @@ class Board:
                     d[row, col] = "?"
                 if self.flags[row, col]:
                     d[row, col] = "F"
-        print(d)
+        print(d)  # print or return string?
 
 
 def test_text_minesweeper():
@@ -180,5 +182,7 @@ def test_text_minesweeper():
 
 # test_text_minesweeper()
 
-g = Game(10, 10)
-g.play()
+
+if __name__ == "__main__":
+    g = Game(10, 10)
+    g.play()
