@@ -95,19 +95,19 @@ class Board:
         """
         mines = 0
         for row_delta, col_delta in SURROUNDING_SPACE_DELTAS:
-            current_row = row + row_delta
-            current_col = col + col_delta
-            within_board = 0 <= current_row < self.board_size and 0 <= current_col < self.board_size
+            curr_row = row + row_delta
+            curr_col = col + col_delta
+            within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
 
-            if within_board and self.board[current_row, current_col] == -1:
+            if within_board and self.board[curr_row, curr_col] == -1:
                 mines += 1
 
         return mines
 
     def _connected_blank_spaces(self, row: int, col: int) -> List[Tuple[int, int]]:
         """
-        Identifies a list of all blank spaces within an adjacent-connected region to the identified position. Uses a
-        BFS to search for these
+        Identifies a list of all blank spaces within an adjacent-connected region to the identified position.
+        Uses a BFS to search for this.
 
         :param row: row of position
         :param col: col of position
@@ -119,13 +119,14 @@ class Board:
         while len(queue) > 0:
             row, col = queue.pop(0)
             for row_delta, col_delta in ADJACENT_SPACE_DELTAS:
-                current_row = row + row_delta
-                current_col = col + col_delta
+                curr_row = row + row_delta
+                curr_col = col + col_delta
+                within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
 
-                within_board = 0 <= current_row < self.board_size and 0 <= current_col < self.board_size
-                if within_board and self.board[current_row, current_col] == 0 and (current_row, current_col) not in spaces:
-                    queue.append((current_row, current_col))
-                    spaces.append((current_row, current_col))
+                if within_board and self.board[curr_row, curr_col] == 0 and (curr_row, curr_col) not in spaces:
+                    queue.append((curr_row, curr_col))
+                    spaces.append((curr_row, curr_col))
+
         return spaces
 
     def step(self, row: int, col: int, flag: bool) -> int:
@@ -134,8 +135,8 @@ class Board:
 
         :param row: row of the move
         :param col: column of the move
-        :param flag: whether the player's move was to toggle flag for the position, or to uncover the position. True
-            means it was to toggle flag
+        :param flag: whether the player's move was to toggle flag for the position, or to uncover the position.
+            True means it was to toggle flag
         :return: resultant game status; 0 is ongoing, -1 is lost, 1 is won
         """
         if flag:
@@ -143,17 +144,18 @@ class Board:
         elif self.board[row, col] > 0:
             self.visibility[row, col] = True
         elif self.board[row, col] == 0:
+            # uncover all connected blank spaces and surrounding non-mine spaces
             blank_spaces = self._connected_blank_spaces(row, col)
             for space_row, space_col in blank_spaces:
                 self.visibility[space_row, space_col] = True
-                for delta_row, delta_col in SURROUNDING_SPACE_DELTAS:
-                    current_row = space_row + delta_row
-                    current_col = space_col + delta_col
-                    within_board = 0 <= current_row < self.board_size and 0 <= current_col < self.board_size
-                    if within_board and self.board[current_row, current_col] > 0:
-                        self.visibility[current_row, current_col] = True
+                for row_delta, col_delta in SURROUNDING_SPACE_DELTAS:
+                    curr_row = space_row + row_delta
+                    curr_col = space_col + col_delta
+                    within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
+                    if within_board and self.board[curr_row, curr_col] > 0:
+                        self.visibility[curr_row, curr_col] = True
         else:
-            # only lose if it you click a bomb and it's not flagged. If flagged, do nothing.
+            # only lose if it you click a mine and it's not flagged. If flagged, do nothing.
             if not self.flags[row, col]:
                 self.visibility[row, col] = True
                 return -1
@@ -165,7 +167,8 @@ class Board:
 
     def display_visible(self) -> None:
         """
-        Prints out the visible board
+        Prints out the visible board. Each element will be converted to a str, and then hidden (?) or flagged (F)
+        depending on the space.
         """
         d = self.board.astype(str)
         for row in range(self.board_size):
