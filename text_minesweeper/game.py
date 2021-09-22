@@ -16,14 +16,24 @@ class Game:
         :param board_size: the board will be a square of length `board_size`
         :param num_mines: number of mines in the game, randomly dispersed
         """
-        self.board = Board(board_size, num_mines)
+        self.board_size = board_size
+        self.num_mines = num_mines
+        self.board = Board(self.board_size, self.num_mines)
 
     def play(self) -> None:
         """
-        The main loop to play the game
+        The main loop to play the game. User input move is (row, col, flag), which are all integers.
         """
         game_status = 0
+        print("Initial visible board:")
         self.board.display_visible()
+        print(
+            "At each turn, type in a move in the form 'row, col, flag', where each value is an integer. E.g. '1,3,0'. "
+            "`flag` of 1 means you want to flag the position; otherwise you'll uncover the position. "
+            "After you submit your move, the resultant visible board will be shown. An error may be thrown if your "
+            "input is invalid."
+        )
+
         while game_status == 0:
             user_input = input("Enter your move (e.g. '1,3,0'): ")
             s = user_input.split(',')
@@ -39,6 +49,12 @@ class Game:
         else:
             print("You win! Congratulations!")
 
+    def reset(self) -> None:
+        """
+        Reset the game.
+        """
+        self.board = Board(self.board_size, self.num_mines)
+
 
 class Board:
     def __init__(self, board_size: int, num_mines: int):
@@ -52,9 +68,9 @@ class Board:
         :param board_size: the board will be a square of length `board_size`
         :param num_mines: number of mines in the game, randomly dispersed
         """
-        self.board = np.zeros((board_size, board_size), dtype=int)
         self.board_size = board_size
         self.num_mines = num_mines
+        self.board = np.zeros((self.board_size, self.board_size), dtype=int)
 
         # Add mines randomly
         mine_flattened_locs = np.random.choice(board_size ** 2, num_mines, replace=False)
@@ -78,17 +94,14 @@ class Board:
         :return: number of mines surrounding
         """
         mines = 0
-        # TODO: refactor to use SURROUNDING_SPACE_DELTAS
-        for row_delta in [-1, 0, 1]:
+        for row_delta, col_delta in SURROUNDING_SPACE_DELTAS:
             current_row = row + row_delta
-            if 0 <= current_row < self.board_size:
-                for col_delta in [-1, 0, 1]:
-                    current_col = col + col_delta
-                    if 0 <= current_col < self.board_size:
-                        if row_delta == 0 and col_delta == 0:
-                            pass
-                        else:
-                            mines += 1 if self.board[current_row, current_col] == -1 else 0
+            current_col = col + col_delta
+            within_board = 0 <= current_row < self.board_size and 0 <= current_col < self.board_size
+
+            if within_board and self.board[current_row, current_col] == -1:
+                mines += 1
+
         return mines
 
     def _connected_blank_spaces(self, row: int, col: int) -> List[Tuple[int, int]]:
@@ -140,8 +153,10 @@ class Board:
                     if within_board and self.board[current_row, current_col] > 0:
                         self.visibility[current_row, current_col] = True
         else:
-            self.visibility[row, col] = True
-            return -1
+            # only lose if it you click a bomb and it's not flagged. If flagged, do nothing.
+            if not self.flags[row, col]:
+                self.visibility[row, col] = True
+                return -1
 
         if np.sum(self.visibility) == self.board_size ** 2 - self.num_mines:
             return 1
@@ -156,33 +171,13 @@ class Board:
         for row in range(self.board_size):
             for col in range(self.board_size):
                 if not self.visibility[row, col]:
-                    d[row, col] = "?"
-                if self.flags[row, col]:
-                    d[row, col] = "F"
-        print(d)  # print or return string?
-
-
-def test_text_minesweeper():
-    np.random.seed(1)
-    b = Board(10, 10)
-
-    print(b.board)
-    b.step(0, 9, False)
-    print(b.display_visible())
-    b.step(5, 5, False)
-    print(b.display_visible())
-    b.step(5, 6, True)
-    print(b.display_visible())
-    b.step(5, 6, False)
-    print(b.display_visible())
-    b.step(5, 6, True)
-    print(b.display_visible())
-    b.step(0, 0, False)
-    print(b.display_visible())
-
-# test_text_minesweeper()
+                    if self.flags[row, col]:
+                        d[row, col] = "F"
+                    else:
+                        d[row, col] = "?"
+        print(d)
 
 
 if __name__ == "__main__":
-    g = Game(10, 10)
+    g = Game(5, 3)
     g.play()
