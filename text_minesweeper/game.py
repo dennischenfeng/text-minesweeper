@@ -85,6 +85,16 @@ class Board:
         self.visibility = np.zeros((board_size, board_size), dtype=bool)
         self.flags = np.zeros((board_size, board_size), dtype=bool)
 
+    def _within_board(self, row: int, col: int) -> bool:
+        """
+        Whether or not the row / col is inside the board.
+
+        :param row: row of position
+        :param col: col of position
+        :return:
+        """
+        return (0 <= row < self.board_size) and (0 <= col < self.board_size)
+
     def _num_mines_surrounding(self, row: int, col: int) -> int:
         """
         Number of mines surrounding this particular position
@@ -97,7 +107,7 @@ class Board:
         for row_delta, col_delta in SURROUNDING_SPACE_DELTAS:
             curr_row = row + row_delta
             curr_col = col + col_delta
-            within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
+            within_board = self._within_board(curr_row, curr_col)
 
             if within_board and self.board[curr_row, curr_col] == -1:
                 mines += 1
@@ -121,7 +131,7 @@ class Board:
             for row_delta, col_delta in ADJACENT_SPACE_DELTAS:
                 curr_row = row + row_delta
                 curr_col = col + col_delta
-                within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
+                within_board = self._within_board(curr_row, curr_col)
 
                 if within_board and self.board[curr_row, curr_col] == 0 and (curr_row, curr_col) not in spaces:
                     queue.append((curr_row, curr_col))
@@ -151,7 +161,7 @@ class Board:
                 for row_delta, col_delta in SURROUNDING_SPACE_DELTAS:
                     curr_row = space_row + row_delta
                     curr_col = space_col + col_delta
-                    within_board = 0 <= curr_row < self.board_size and 0 <= curr_col < self.board_size
+                    within_board = self._within_board(curr_row, curr_col)
                     if within_board and self.board[curr_row, curr_col] > 0:
                         self.visibility[curr_row, curr_col] = True
         else:
