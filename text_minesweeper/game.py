@@ -1,5 +1,5 @@
 """
-Text-based minesweeper game
+Text-based minesweeper game. Only has basic functionality.
 """
 import numpy as np
 from typing import List, Tuple
