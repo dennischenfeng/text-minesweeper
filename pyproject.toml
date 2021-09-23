@@ -7,11 +7,17 @@ readme = "README.md"
 packages = [{include = "text_minesweeper"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.9,<3.10"
 numpy = "^1.21.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
+mypy = "^0.910"
+pytype = "^2021.9.9"
+flake8 = "^3.9.2"
+pylint = "^2.11.1"
+black = "^21.9-beta.0"
+isort = "^5.9.3"
 
 [build-system]
 requires = ["poetry-core"]
