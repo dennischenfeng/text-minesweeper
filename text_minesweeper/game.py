@@ -1,8 +1,9 @@
 """
 Text-based minesweeper game. Only has basic functionality.
 """
-import numpy as np
 from typing import List, Tuple
+
+import numpy as np
 
 ADJACENT_SPACE_DELTAS = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 SURROUNDING_SPACE_DELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
