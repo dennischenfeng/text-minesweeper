@@ -9,6 +9,9 @@ SURROUNDING_SPACE_DELTAS = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1)
 
 
 class Game:
+    """
+    Game engine handle, to play the text-based minesweeper game.
+    """
     def __init__(self, board_size: int, num_mines: int):
         """
         Instantiates a game handle.
@@ -57,6 +60,10 @@ class Game:
 
 
 class Board:
+    """
+    Game board, for text-minesweeper. Holds information about each space (e.g. whether mine, hidden, or flag). You
+    can also play a move on the board.
+    """
     def __init__(self, board_size: int, num_mines: int):
         """
         Initialize the board. The internal board state is represented with a number in each element,
