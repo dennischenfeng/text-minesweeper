@@ -12,6 +12,7 @@ class Game:
     """
     Game engine handle, to play the text-based minesweeper game.
     """
+
     def __init__(self, board_size: int, num_mines: int):
         """
         Instantiates a game handle.
@@ -39,7 +40,7 @@ class Game:
 
         while game_status == 0:
             user_input = input("Enter your move (e.g. '1,3,0'): ")
-            s = user_input.split(',')
+            s = user_input.split(",")
             row = int(s[0])
             col = int(s[1])
             flag = bool(int(s[2]))
@@ -64,6 +65,7 @@ class Board:
     Game board, for text-minesweeper. Holds information about each space (e.g. whether mine, hidden, or flag). You
     can also play a move on the board.
     """
+
     def __init__(self, board_size: int, num_mines: int):
         """
         Initialize the board. The internal board state is represented with a number in each element,
